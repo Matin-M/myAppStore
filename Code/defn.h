@@ -17,20 +17,20 @@ namespace defn {
         float price; // Price in $ of the application
     };
 
-    struct tree { // A binary search tree
+    struct app { // A binary search tree
         app_info record; // Information about the application
-        tree *left;  // Pointer to the left subtree
-        tree *right;  // Pointer to the right subtree
+        app *left;  // Pointer to the left subtree
+        app *right;  // Pointer to the right subtree
     };
 
-    struct categories {
+    struct category {
         string category; // Name of category
-        tree *root;  // Pointer to root of search tree for this category
+        app *root;  // Pointer to root of search tree for this category
     };
 
     struct hash_table_entry {
         string app_name; // Name of the application
-        tree *app_node; // Pointer to node in tree containing the application information
+        app *app_node; // Pointer to node in tree containing the application information
         hash_table_entry *next; // Next pointer for chain in separate chaining
     };
 
