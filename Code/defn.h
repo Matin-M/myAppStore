@@ -1,30 +1,42 @@
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
 #define	CAT_NAME_LEN	25
 #define	APP_NAME_LEN	50
 #define	VERSION_LEN	10
 #define	UNIT_SIZE	3
 
-struct app_info{
-	char category[ CAT_NAME_LEN ]; // Name of category
-	char app_name[ APP_NAME_LEN ]; // Name of the application
-	char version[ VERSION_LEN ]; // Version number
-	float size; // Size of the application
-	char units[ UNIT_SIZE ]; // GB or MB
-	float price; // Price in $ of the application
-};
+using namespace std;
 
-struct tree{ // A binary search tree
-    struct app_info record; // Information about the application
-    struct tree *left;  // Pointer to the left subtree
-    struct tree *right;  // Pointer to the right subtree
-};
+namespace defn {
 
-struct categories{
-    char category[ CAT_NAME_LEN ]; // Name of category
-    struct tree *root;  // Pointer to root of search tree for this category
-};
+    struct app_info {
+        string category; // Name of category
+        string app_name; // Name of the application
+        string version; // Version number
+        float size; // Size of the application
+        string units; // GB or MB
+        float price; // Price in $ of the application
+    };
 
-struct hash_table_entry{
-   char app_name[ APP_NAME_LEN ]; // Name of the application
-   struct tree *app_node; // Pointer to node in tree containing the application information
-   struct hash_table_entry *next; // Next pointer for chain in separate chaining
-};
+    struct tree { // A binary search tree
+        app_info record; // Information about the application
+        tree *left;  // Pointer to the left subtree
+        tree *right;  // Pointer to the right subtree
+    };
+
+    struct categories {
+        string category; // Name of category
+        tree *root;  // Pointer to root of search tree for this category
+    };
+
+    struct hash_table_entry {
+        string app_name; // Name of the application
+        tree *app_node; // Pointer to node in tree containing the application information
+        hash_table_entry *next; // Next pointer for chain in separate chaining
+    };
+
+}
