@@ -1,11 +1,10 @@
-#include <iostream>
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 using namespace std;
 
+//Define a namespace to avoid redundant resolution operator calls.
 namespace defn {
 
     struct app_info {
