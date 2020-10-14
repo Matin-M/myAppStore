@@ -9,8 +9,10 @@
 using namespace std;
 using namespace defn;
 
+//n represents number of categories.
+static int n;
 //Static array holding categories.
-static category** categories;
+static category** categories = NULL;
 //Static array holding hashTable.
 static hash_table_entry** hashTable;
 //Size of hashtable.
@@ -86,12 +88,71 @@ static hash_table_entry* searchHash(string key)
 
 }
 
+static app* insertBST(app* rootNode, app* newApp)
+{
+    if(rootNode == NULL)
+    {
+        rootNode = newApp;
+    }
+    else if((rootNode->record.app_name).compare(newApp->record.app_name) > 0)
+    {
+        rootNode->right = insertBST(rootNode->right, newApp);
+    }
+    else
+    {
+        rootNode->left = insertBST(rootNode->left, newApp);
+    }
+
+    return rootNode;
+}
+
+static void insertHelperBST(string cat, app* newApp)
+{
+    category* bin = NULL;
+    for(int i = 0; i < n; i++)
+    {
+        if((categories[i]->category).compare(cat) == 0)
+        {
+            bin = categories[i];
+        }
+    }
+
+    app* categoryNode = bin->root;
+    bin->root = insertBST(categoryNode, newApp);
+}
+
+
+
+
 int main() {
     cout << "Find.cpp" << endl;
 
-    int n = 3;
+    n = 3;
     categories = new category*[n];
     createHashTable(n);
+    string strCat[3] = {"Games","Productivity","Media"};
+    for(int i = 0; i < n; i++)
+    {
+        category* newCat = new category();
+        newCat->category = strCat[i];
+        categories[i] = newCat;
+    }
+
+    app* testBST = new app();
+    testBST->record.app_name = "Test App";
+    insertHelperBST("Games", testBST);
+
+    app* testBST2 = new app();
+    testBST2->record.app_name = "Test App2";
+    insertHelperBST("Games", testBST2);
+
+
+    if(categories[0]->root->left == NULL)
+    {
+        cout << "Root DNE!\n";
+    }else{
+        cout << "Test NameL: " << categories[0]->root->left->record.app_name;
+    }
 
     //Create and insert a new app
     hash_table_entry* newAppHash = new hash_table_entry();
@@ -101,7 +162,7 @@ int main() {
     insertHash(newAppHash);
     insertHash(newAppHash2);
 
-    hash_table_entry* test = searchHash("App 1");
+    hash_table_entry* test = searchHash("Random APp");
     if(test == NULL)
     {
         cout << "Null!";
@@ -109,13 +170,6 @@ int main() {
         cout << test->app_name;
     }
 
-    /*
-    int counter = 0;
-    while (getline(cin, input))
-    {
-        cout << input;
-    }
-     */
 
     return 0;
 }
