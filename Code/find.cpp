@@ -30,9 +30,9 @@ static bool TestForPrime( int val )
 }
 
 
-static void createHashTable(int n)
+static void createHashTable()
 {
-    m = n*2;
+    m = m*2;
     bool cond = true;
     while (true)
     {
@@ -94,7 +94,7 @@ static app* insertBST(app* rootNode, app* newApp)
     {
         rootNode = newApp;
     }
-    else if((rootNode->record.app_name).compare(newApp->record.app_name) > 0)
+    else if((rootNode->record.app_name).compare(newApp->record.app_name) < 0)
     {
         rootNode->right = insertBST(rootNode->right, newApp);
     }
@@ -108,26 +108,28 @@ static app* insertBST(app* rootNode, app* newApp)
 
 static void insertHelperBST(string cat, app* newApp)
 {
-    category* bin = NULL;
+
     for(int i = 0; i < n; i++)
     {
+        //cout << cat << endl;
+        //cout << categories[i]->category;
         if((categories[i]->category).compare(cat) == 0)
         {
-            bin = categories[i];
+            //cout << "INNER LOOP EXECUTED!";
+            categories[i]->root = insertBST(categories[i]->root, newApp);
+            break;
         }
     }
 
-    app* categoryNode = bin->root;
-    bin->root = insertBST(categoryNode, newApp);
 }
 
 
 
 
 int main() {
-    cout << "Find.cpp" << endl;
+    //Testing code.
 
-    n = 3;
+    /*
     categories = new category*[n];
     createHashTable(n);
     string strCat[3] = {"Games","Productivity","Media"};
@@ -142,11 +144,6 @@ int main() {
     testBST->record.app_name = "Test App";
     insertHelperBST("Games", testBST);
 
-    app* testBST2 = new app();
-    testBST2->record.app_name = "Test App2";
-    insertHelperBST("Games", testBST2);
-
-
     if(categories[0]->root->left == NULL)
     {
         cout << "Root DNE!\n";
@@ -157,18 +154,65 @@ int main() {
     //Create and insert a new app
     hash_table_entry* newAppHash = new hash_table_entry();
     newAppHash->app_name = "App 1";
-    hash_table_entry* newAppHash2 = new hash_table_entry();
-    newAppHash->app_name = "App 1";
     insertHash(newAppHash);
-    insertHash(newAppHash2);
+    */
 
-    hash_table_entry* test = searchHash("Random APp");
-    if(test == NULL)
+    cout << "testing1" << endl;
+
+    //Parse text file.
+    string input = "";
+    getline(cin, input);
+    n = stoi(input);
+    categories = new category*[n];
+    //Obtain categories and store in category array.
+    for(int i = 0; i < n; i++)
     {
-        cout << "Null!";
-    }else{
-        cout << test->app_name;
+        getline(cin, input);
+        category* newCat = new category();
+        newCat->category = input;
+        categories[i] = newCat;
     }
+
+    //Get number of apps.
+    getline(cin, input);
+    m = stoi(input);
+    createHashTable();
+    //Populate the data structures with apps.
+    for(int i = 0; i < m; i++)
+    {
+        int catIndex = 0;
+        string getCat = "";
+        getline(cin, getCat);
+
+        //New hash table and BST entries
+        app* newApp = new app();
+        hash_table_entry* newAppHash = new hash_table_entry();
+        newAppHash->app_node = newApp;
+
+        //Store all attributes within strings
+        string appName, version, size, units, price = "";
+        getline(cin, appName);
+        getline(cin, version);
+        getline(cin, size);
+        getline(cin, units);
+        getline(cin, price);
+
+        //Assign properties
+        newAppHash->app_name = appName;
+        newApp->record.app_name = appName;
+        newApp->record.version = version;
+        newApp->record.size = size;
+        newApp->record.units = units;
+        newApp->record.price = price;
+
+        //Insert app into BST
+        insertHelperBST(getCat, newApp);
+        insertHash(newAppHash);
+
+    }
+
+    hash_table_entry* test1 = searchHash("MC");
+    cout << test1->app_name;
 
 
     return 0;
