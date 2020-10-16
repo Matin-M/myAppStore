@@ -60,6 +60,7 @@ static int hashFunc(string key)
 
 static void insertHash(hash_table_entry* input)
 {
+    //Insert at head.
     string appName = input->app_name;
     int k = hashFunc(appName);
 
@@ -85,7 +86,7 @@ static hash_table_entry* searchHash(string key)
         }
         l = l->next;
     }
-
+    return NULL;
 }
 
 static app* insertBST(app* rootNode, app* newApp)
@@ -111,11 +112,9 @@ static void insertHelperBST(string cat, app* newApp)
 
     for(int i = 0; i < n; i++)
     {
-        //cout << cat << endl;
-        //cout << categories[i]->category;
+
         if((categories[i]->category).compare(cat) == 0)
         {
-            //cout << "INNER LOOP EXECUTED!";
             categories[i]->root = insertBST(categories[i]->root, newApp);
             break;
         }
@@ -127,47 +126,18 @@ static void insertHelperBST(string cat, app* newApp)
 
 
 int main() {
-    //Testing code.
-
-    /*
-    categories = new category*[n];
-    createHashTable(n);
-    string strCat[3] = {"Games","Productivity","Media"};
-    for(int i = 0; i < n; i++)
-    {
-        category* newCat = new category();
-        newCat->category = strCat[i];
-        categories[i] = newCat;
-    }
-
-    app* testBST = new app();
-    testBST->record.app_name = "Test App";
-    insertHelperBST("Games", testBST);
-
-    if(categories[0]->root->left == NULL)
-    {
-        cout << "Root DNE!\n";
-    }else{
-        cout << "Test NameL: " << categories[0]->root->left->record.app_name;
-    }
-
-    //Create and insert a new app
-    hash_table_entry* newAppHash = new hash_table_entry();
-    newAppHash->app_name = "App 1";
-    insertHash(newAppHash);
-    */
-
-    cout << "testing1" << endl;
-
+    int SeekG = 0;
     //Parse text file.
     string input = "";
     getline(cin, input);
+    SeekG++;
     n = stoi(input);
     categories = new category*[n];
     //Obtain categories and store in category array.
     for(int i = 0; i < n; i++)
     {
         getline(cin, input);
+        SeekG++;
         category* newCat = new category();
         newCat->category = input;
         categories[i] = newCat;
@@ -175,6 +145,7 @@ int main() {
 
     //Get number of apps.
     getline(cin, input);
+    SeekG++;
     m = stoi(input);
     createHashTable();
     //Populate the data structures with apps.
@@ -183,6 +154,7 @@ int main() {
         int catIndex = 0;
         string getCat = "";
         getline(cin, getCat);
+        SeekG++;
 
         //New hash table and BST entries
         app* newApp = new app();
@@ -196,7 +168,7 @@ int main() {
         getline(cin, size);
         getline(cin, units);
         getline(cin, price);
-
+        SeekG += 5;
         //Assign properties
         newAppHash->app_name = appName;
         newApp->record.app_name = appName;
@@ -204,6 +176,7 @@ int main() {
         newApp->record.size = size;
         newApp->record.units = units;
         newApp->record.price = price;
+        newApp->record.category = getCat;
 
         //Insert app into BST
         insertHelperBST(getCat, newApp);
@@ -211,9 +184,39 @@ int main() {
 
     }
 
-    hash_table_entry* test1 = searchHash("MC");
-    cout << test1->app_name;
 
+    //Process requests.
+    string searchRequest = "";
+    input = "";
+    cin.clear();
+    cin.seekg(SeekG);
+
+    while(getline(cin, input))
+    {
+        searchRequest = "";
+        if(input.length() != 0)
+        {
+            for(int i = 9; i < input.length(); i++)
+            {
+                searchRequest += input[i];
+            }
+            hash_table_entry* search = searchHash(searchRequest);
+            if(search == NULL)
+            {
+                cout << "Application " << searchRequest << " not found." << endl;
+            }else
+            {
+                cout << "Found application: " << searchRequest << endl;
+                cout << "\tCategory: " << search->app_node->record.category << endl;
+                cout << "\tApplication Name: " << search->app_node->record.app_name << endl;
+                cout << "\tVersion: " << search->app_node->record.version << endl;
+                cout << "\tSize: " << search->app_node->record.category << endl;
+                cout << "\tUnits: " << search->app_node->record.units << endl;
+                cout << "\tPrice: " << search->app_node->record.price << endl << endl;
+            }
+
+        }
+    }
 
     return 0;
 }
