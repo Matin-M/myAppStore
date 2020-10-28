@@ -18,6 +18,11 @@ static hash_table_entry** hashTable;
 //Size of hashtable.
 static int m = 0;
 
+/**
+ * Test if a number is prime or not.
+ * @param val
+ * @return
+ */
 static bool TestForPrime( int val )
 {
     int limit, factor = 2;
@@ -29,7 +34,9 @@ static bool TestForPrime( int val )
     return( factor > limit );
 }
 
-
+/**
+ * Instantiates a new hash table.
+ */
 static void createHashTable()
 {
     m = m*2;
@@ -47,6 +54,11 @@ static void createHashTable()
 
 }
 
+/**
+ * Hash function that generates a position using an input key.
+ * @param key
+ * @return
+ */
 static int hashFunc(string key)
 {
     int charTotal = 0;
@@ -58,6 +70,10 @@ static int hashFunc(string key)
     return charTotal % m;
 }
 
+/**
+ * Inserts an app into the hash table using separate chaining.
+ * @param input
+ */
 static void insertHash(hash_table_entry* input)
 {
     //Insert at head.
@@ -74,6 +90,11 @@ static void insertHash(hash_table_entry* input)
 
 }
 
+/**
+ * Search hash table and associated linkedlists.
+ * @param key
+ * @return
+ */
 static hash_table_entry* searchHash(string key)
 {
     int k = hashFunc(key);
@@ -89,6 +110,12 @@ static hash_table_entry* searchHash(string key)
     return NULL;
 }
 
+/**
+ * A recursive procedure that inserts a new node into a binary search tree.
+ * @param rootNode
+ * @param newApp
+ * @return
+ */
 static app* insertBST(app* rootNode, app* newApp)
 {
     if(rootNode == NULL)
@@ -107,6 +134,11 @@ static app* insertBST(app* rootNode, app* newApp)
     return rootNode;
 }
 
+/**
+ * A helper function used to narrow down app category to search in.
+ * @param cat
+ * @param newApp
+ */
 static void insertHelperBST(string cat, app* newApp)
 {
 
@@ -122,22 +154,20 @@ static void insertHelperBST(string cat, app* newApp)
 
 }
 
-
-
-
+/**
+ * Main method.
+ * @return
+ */
 int main() {
-    int SeekG = 0;
     //Parse text file.
     string input = "";
     getline(cin, input);
-    SeekG++;
     n = stoi(input);
     categories = new category*[n];
     //Obtain categories and store in category array.
     for(int i = 0; i < n; i++)
     {
         getline(cin, input);
-        SeekG++;
         category* newCat = new category();
         newCat->category = input;
         categories[i] = newCat;
@@ -145,16 +175,15 @@ int main() {
 
     //Get number of apps.
     getline(cin, input);
-    SeekG++;
-    m = stoi(input);
+    int numApps = stoi(input);
+    m = numApps;
     createHashTable();
     //Populate the data structures with apps.
-    for(int i = 0; i < m; i++)
+    for(int i = 0; i < numApps; i++)
     {
         int catIndex = 0;
         string getCat = "";
         getline(cin, getCat);
-        SeekG++;
 
         //New hash table and BST entries
         app* newApp = new app();
@@ -168,7 +197,7 @@ int main() {
         getline(cin, size);
         getline(cin, units);
         getline(cin, price);
-        SeekG += 5;
+
         //Assign properties
         newAppHash->app_name = appName;
         newApp->record.app_name = appName;
@@ -183,14 +212,12 @@ int main() {
         insertHash(newAppHash);
 
     }
-
+    //Skip next line, move onto request lines.
+    getline(cin, input);
 
     //Process requests.
     string searchRequest = "";
     input = "";
-    cin.clear();
-    cin.seekg(SeekG);
-
     while(getline(cin, input))
     {
         searchRequest = "";
