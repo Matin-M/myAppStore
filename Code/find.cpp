@@ -154,6 +154,7 @@ static void insertHelperBST(string cat, app* newApp)
 
 }
 
+
 /**
  * Main method.
  * @return
@@ -218,31 +219,45 @@ int main() {
     //Process requests.
     string searchRequest = "";
     input = "";
-    while(getline(cin, input))
+    while(getline(cin, input) && input.length() != 0)
     {
         searchRequest = "";
-        if(input.length() != 0)
+        if(input.find("find app") != string::npos)
         {
-            for(int i = 9; i < input.length(); i++)
-            {
-                searchRequest += input[i];
-            }
-            hash_table_entry* search = searchHash(searchRequest);
-            if(search == NULL)
-            {
-                cout << "Application " << searchRequest << " not found." << endl;
-            }else
-            {
-                cout << "Found application: " << searchRequest << endl;
-                cout << "\tCategory: " << search->app_node->record.category << endl;
-                cout << "\tApplication Name: " << search->app_node->record.app_name << endl;
-                cout << "\tVersion: " << search->app_node->record.version << endl;
-                cout << "\tSize: " << search->app_node->record.category << endl;
-                cout << "\tUnits: " << search->app_node->record.units << endl;
-                cout << "\tPrice: " << search->app_node->record.price << endl << endl;
-            }
+                for(int i = 9; i < input.length(); i++)
+                {
+                    searchRequest += input[i];
+                }
+                hash_table_entry* search = searchHash(searchRequest);
+                if(search == NULL)
+                {
+                    cout << "Application " << searchRequest << " not found." << endl;
+                }else
+                {
+                    cout << "Found application: " << searchRequest << endl;
+                    cout << "\tCategory: " << search->app_node->record.category << endl;
+                    cout << "\tApplication Name: " << search->app_node->record.app_name << endl;
+                    cout << "\tVersion: " << search->app_node->record.version << endl;
+                    cout << "\tSize: " << search->app_node->record.category << endl;
+                    cout << "\tUnits: " << search->app_node->record.units << endl;
+                    cout << "\tPrice: " << search->app_node->record.price << endl << endl;
+                }
+
+        }else if(input.find("find app") != string::npos)
+        {
+
+        }else if(input.find("find price") != string::npos)
+        {
+
+        }else if(input.find("range") != string::npos)
+        {
+
+        }else if(input.find("delete") != string::npos)
+        {
 
         }
+
+
     }
 
     return 0;
