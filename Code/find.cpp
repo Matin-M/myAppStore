@@ -154,6 +154,26 @@ static void insertHelperBST(string cat, app* newApp)
 
 }
 
+/**
+ * Prints out apps in-order for a specific category.
+ * @param root
+ */
+static void inorder(app* root)
+{
+    if(root != NULL)
+    {
+        inorder(root->left);
+
+        cout << "\tApplication Name: " << root->record.app_name << endl;
+        cout << "\tVersion: " << root->record.version << endl;
+        cout << "\tSize: " << root->record.category << endl;
+        cout << "\tUnits: " << root->record.units << endl;
+        cout << "\tPrice: " << root->record.price << endl << endl;
+
+        inorder(root->right);
+    }
+}
+
 
 /**
  * Main method.
@@ -231,7 +251,7 @@ int main() {
                 hash_table_entry* search = searchHash(searchRequest);
                 if(search == NULL)
                 {
-                    cout << "Application " << searchRequest << " not found." << endl;
+                    cout << "Application " << searchRequest << " not found." << endl << endl;
                 }else
                 {
                     cout << "Found application: " << searchRequest << endl;
@@ -243,8 +263,34 @@ int main() {
                     cout << "\tPrice: " << search->app_node->record.price << endl << endl;
                 }
 
-        }else if(input.find("find app") != string::npos)
+
+        }else if(input.find("find category") != string::npos)
         {
+            searchRequest = "";
+            for(int i = 14; i < input.length(); i++)
+            {
+                searchRequest += input[i];
+            }
+
+            app* rootNode;
+            for(int i = 0; i < n; i++)
+            {
+                if((categories[i]->category).compare(searchRequest) == 0)
+                {
+                    rootNode = categories[i]->root;
+                    break;
+                }
+            }
+
+            //Perform inorder traversal.
+            if(rootNode != NULL)
+            {
+                cout << "Category: " << searchRequest << endl;
+                inorder(rootNode);
+            }else{
+                cout << "Category not found";
+            }
+
 
         }else if(input.find("find price") != string::npos)
         {
