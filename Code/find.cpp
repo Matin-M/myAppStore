@@ -17,6 +17,8 @@ static category** categories = NULL;
 static hash_table_entry** hashTable;
 //Size of hashtable.
 static int m = 0;
+//String value used for search results.
+static string searchResult = "";
 
 /**
  * Test if a number is prime or not.
@@ -166,7 +168,7 @@ static void inorder(app* root)
 
         cout << "\tApplication Name: " << root->record.app_name << endl;
         cout << "\tVersion: " << root->record.version << endl;
-        cout << "\tSize: " << root->record.category << endl;
+        cout << "\tSize: " << root->record.size << endl;
         cout << "\tUnits: " << root->record.units << endl;
         cout << "\tPrice: " << root->record.price << endl << endl;
 
@@ -174,6 +176,24 @@ static void inorder(app* root)
     }
 }
 
+/**
+ * Prints out apps in-order for a specific category.
+ * @param root
+ */
+static void findFreeInorder(app* root)
+{
+    if(root != NULL)
+    {
+        findFreeInorder(root->left);
+
+        if(stoi(root->record.price) == 0)
+        {
+            searchResult += "\t" + root->record.app_name + " \n";
+        }
+
+        findFreeInorder(root->right);
+    }
+}
 
 /**
  * Main method.
@@ -185,6 +205,7 @@ int main() {
     getline(cin, input);
     n = stoi(input);
     categories = new category*[n];
+
     //Obtain categories and store in category array.
     for(int i = 0; i < n; i++)
     {
@@ -199,6 +220,7 @@ int main() {
     int numApps = stoi(input);
     m = numApps;
     createHashTable();
+
     //Populate the data structures with apps.
     for(int i = 0; i < numApps; i++)
     {
@@ -258,7 +280,7 @@ int main() {
                     cout << "\tCategory: " << search->app_node->record.category << endl;
                     cout << "\tApplication Name: " << search->app_node->record.app_name << endl;
                     cout << "\tVersion: " << search->app_node->record.version << endl;
-                    cout << "\tSize: " << search->app_node->record.category << endl;
+                    cout << "\tSize: " << search->app_node->record.size << endl;
                     cout << "\tUnits: " << search->app_node->record.units << endl;
                     cout << "\tPrice: " << search->app_node->record.price << endl << endl;
                 }
@@ -288,19 +310,52 @@ int main() {
                 cout << "Category: " << searchRequest << endl;
                 inorder(rootNode);
             }else{
-                cout << "Category not found";
+                cout << "Category " << searchRequest << " no apps found.";
             }
 
 
-        }else if(input.find("find price") != string::npos)
+        }else if(input.find("find price free") != string::npos)
         {
+            app* rootNode;
+            searchResult = "";
+            bool noFree = true;
+            for(int i = 0; i < n; i++)
+            {
+                rootNode = categories[i]->root;
+                if(rootNode != NULL)
+                {
+                    findFreeInorder(rootNode);
+                    if(searchResult.compare("") == 0)
+                    {
+
+                    }else{
+                        cout << "Free Applications in Category: " << categories[i]->category << endl;
+                        cout << searchResult << endl;
+                        noFree = false;
+                    }
+                }
+
+                searchResult = "";
+            }
+
+            if(noFree == true)
+            {
+                cout << "No Free Applications found." << endl;
+            }
 
         }else if(input.find("range") != string::npos)
         {
+            if(input.find("price") != string::npos)
+            {
+                
+            }else
+            {
+
+            }
 
         }else if(input.find("delete") != string::npos)
         {
-
+            cout << "Delete invoked";
         }
 
 
