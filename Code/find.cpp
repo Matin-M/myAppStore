@@ -177,7 +177,7 @@ static void inorder(app* root)
 }
 
 /**
- * Prints out apps in-order for a specific category.
+ * Prints out free apps in-order.
  * @param root
  */
 static void findFreeInorder(app* root)
@@ -192,6 +192,42 @@ static void findFreeInorder(app* root)
         }
 
         findFreeInorder(root->right);
+    }
+}
+
+/**
+ * Prints out apps in-order within a specific price range.
+ * @param root
+ */
+static void findPriceRange(app* root, float min, float max)
+{
+    if(root != NULL)
+    {
+        findPriceRange(root->left, min, max);
+        if(stof(root->record.price) >= min && stof(root->record.price) <= max)
+        {
+            searchResult += "\t" + root->record.app_name + " \n";
+        }
+
+        findPriceRange(root->right, min, max);
+    }
+}
+
+/**
+ * Prints out apps in-order within a specific app name range.
+ * @param root
+ */
+static void findAppRange(app* root, string min, string max)
+{
+    if(root != NULL)
+    {
+        findAppRange(root->left, min, max);
+        if(  (min.compare(root->record.app_name) <= 0) && (max.compare(root->record.app_name) >= 0) )
+        {
+            searchResult += "\t" + root->record.app_name + " \n";
+        }
+
+        findAppRange(root->right, min, max);
     }
 }
 
@@ -266,7 +302,7 @@ int main() {
         searchRequest = "";
         if(input.find("find app") != string::npos)
         {
-                for(int i = 9; i < input.length(); i++)
+                for(int i = 11; i < input.length()-1; i++)
                 {
                     searchRequest += input[i];
                 }
@@ -289,7 +325,7 @@ int main() {
         }else if(input.find("find category") != string::npos)
         {
             searchRequest = "";
-            for(int i = 14; i < input.length(); i++)
+            for(int i = 16; i < input.length()-1; i++)
             {
                 searchRequest += input[i];
             }
@@ -345,11 +381,103 @@ int main() {
 
         }else if(input.find("range") != string::npos)
         {
+
+            string categoryName = "";
+            string low = "";
+            string high = "";
+            searchResult = "";
+
+            //Extract category name.
+
+            for(int i = 7; i < input.length(); i++)
+            {
+                if(input[i] == '"')
+                {
+                    break;
+                }
+                categoryName+=input[i];
+            }
+
+            //Extract rootNode from selected category.
+            app* rootNode = NULL;
+            for(int i = 0; i < n; i++)
+            {
+                if((categories[i]->category).compare(categoryName) == 0)
+                {
+                    rootNode = categories[i]->root;
+                    break;
+                }
+            }
+
             if(input.find("price") != string::npos)
             {
-                
+
+                size_t sIndex = input.find('.');
+                int pIndex = int(sIndex);
+
+                string dollar(1, input[pIndex-1]);
+                string cent(1, input[pIndex+1]);
+                string cent2(1, input[pIndex+2]);
+
+                low = dollar + "." + cent + cent2;
+
+                sIndex = input.find('.', sIndex+1);
+                pIndex = int(sIndex);
+
+                string dollar1(1, input[pIndex-1]);
+                string cent1(1, input[pIndex+1]);
+                string cent3(1, input[pIndex+2]);
+
+                high = dollar1 + "." + cent1 + cent3;
+
+                if(rootNode != NULL)
+                {
+                    cout << "Applications in Price Range($" << low << ",$" << high << ") in Category: " << categoryName << endl;
+                    findPriceRange(rootNode, stof(low), stof(high));
+                    cout << searchResult;
+                }else
+                {
+                    cout << "No apps in price range";
+                }
+
             }else
             {
+                size_t uIndex = input.find("app");
+                uIndex = input.find('"',uIndex+1);
+                int index = int(uIndex);
+                string lower;
+                string upper;
+
+                //Extract lower and upper bounds of the string.
+                int i = 0;
+                for(i = index+1; i < input.size(); i++)
+                {
+                    if(input[i] != '"')
+                    {
+                        lower += input[i];
+                    }else
+                    {
+                        break;
+                    }
+
+                }
+
+                for(i = i+3; i < input.size(); i++)
+                {
+                    if(input[i] != '"')
+                    {
+                        cout << input[i];
+                        upper += input[i];
+                    }else
+                    {
+                        break;
+                    }
+
+                }
+
+
+                cout << "Lower: " << lower;
+                cout << " Upper: " << upper;
 
             }
 
