@@ -295,6 +295,11 @@ struct app* deleteNode(app* root, string key)
     return root;
 }
 
+/**
+ * Delete hash table. Not functional.
+ * @param head
+ * @param key
+ */
 void deleteHashEntry(hash_table_entry* head, string key)
 {
 
@@ -321,6 +326,21 @@ void deleteHashEntry(hash_table_entry* head, string key)
     prev->next = temp->next;
 
     free (temp);
+}
+
+/**
+ * Delete the tree, and return memory back to system.
+ * @param root
+ */
+void deleteTree(app* root)
+{
+    if (root == NULL) return;
+
+    /* first delete both subtrees */
+    deleteTree(root->left);
+    deleteTree(root->right);
+
+    delete root;
 }
 
 
@@ -657,19 +677,53 @@ int main() {
 
         }else if(input.find("no report") != string::npos) {
 
+            //Do nothing.
+
         }else if(input.find("report") != string::npos)
         {
+            //Collect size of hash table and chain lengths.
+            int counter = 0;
+            for(int i = 0; i < m; i++)
+            {
+                hash_table_entry* head = hashTable[i];
+                while(head != NULL)
+                {
+                    counter++;
+                    head = head->next;
+                }
+                //Uncomment for stats.
+                //cout << "Hash table pos: " << i << " chain length: " << counter << endl;
+                counter = 0;
+            }
+
 
         }
-
-
 
 
     }
 
     //Graceful termination.
-    //delete(hashTable);
-    //delete(categories);
+
+    //Delete tree.
+    for(int i = 0; i < n; i++)
+    {
+        deleteTree(categories[i]->root);
+    }
+
+    //Delete linkedlist.
+    for(int i = 0; i < m; i++)
+    {
+        hash_table_entry* head = hashTable[i];
+        while(head != NULL)
+        {
+            head = head->next;
+            free(head);
+        }
+
+    }
+
+    free(hashTable);
+    free(categories);
 
 
     return 0;
