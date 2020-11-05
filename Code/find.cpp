@@ -100,14 +100,14 @@ static void insertHash(hash_table_entry* input)
 static hash_table_entry* searchHash(string key)
 {
     int k = hashFunc(key);
-    hash_table_entry* l = hashTable[k];
-    while(l)
+    hash_table_entry* head = hashTable[k];
+    while(head != NULL)
     {
-        if(l->app_name.compare(key) == 0)
+        if(head->app_name.compare(key) == 0)
         {
-            return l;
+            return head;
         }
-        l = l->next;
+        head = head->next;
     }
     return NULL;
 }
@@ -229,6 +229,100 @@ static void findAppRange(app* root, string min, string max)
         findAppRange(root->right, min, max);
     }
 }
+/**
+ * Returns minimum element in the tree for given node.
+ * @param node
+ * @return
+ */
+struct app* minValue(struct app* node)
+{
+    struct app* current = node;
+
+    /* loop down to find the leftmost leaf */
+    while (current && current->left != NULL)
+        current = current->left;
+
+    return current;
+}
+
+/**
+ * Delete a node from the BST.
+ * @param root
+ * @param key
+ * @return
+ */
+struct app* deleteNode(app* root, string key)
+{
+    // base case
+    if (root == NULL)
+    {
+        return root;
+    }
+
+    if ((key).compare(root->record.app_name) < 0)
+    {
+        root->left = deleteNode(root->left, key);
+    }
+
+    else if ((key).compare(root->record.app_name) > 0)
+    {
+        root->right = deleteNode(root->right, key);
+    }
+
+
+    else
+    {
+        // node with only one child or no child
+        if (root->left == NULL)
+        {
+            struct app *temp = root->right;
+            free(root);
+            return temp;
+        }
+        else if (root->right == NULL)
+        {
+            struct app *temp = root->left;
+            free(root);
+            return temp;
+        }
+
+        struct app* temp = minValue(root->right);
+
+        root->record = temp->record;
+
+        root->right = deleteNode(root->right, temp->record.app_name);
+    }
+    return root;
+}
+
+void deleteHashEntry(hash_table_entry* head, string key)
+{
+
+    hash_table_entry* temp = head;
+    hash_table_entry* prev = NULL;
+
+    if (temp != NULL && key.compare(temp->app_name) == 0)
+    {
+        head = head->next;
+        free (temp);
+        return;
+    }
+
+
+    while (temp != NULL && key.compare(temp->app_name) != 0)
+    {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    if (temp == NULL)
+        return;
+
+    prev->next = temp->next;
+
+    free (temp);
+}
+
 
 /**
  * Main method.
@@ -445,10 +539,10 @@ int main() {
                     {
 
                         cout << "Applications in Price Range ($" << low << ",$" << high << ") in Category: " << categoryName << endl;
-                        cout << searchResult;
+                        cout << searchResult << endl;
                     }else
                     {
-                        cout << "No applications found in category" << categoryName << " for given price range ($" << low << ",$" << high << ")"  << endl;
+                        cout << "No applications found in category" << categoryName << " for given price range ($" << low << ",$" << high << ")"  << endl << endl;
                     }
 
                 }else
@@ -501,10 +595,10 @@ int main() {
                     if(searchResult.compare("") != 0)
                     {
                         cout << "Applications in Range (" << lower << "," << upper << ") in Category: " << categoryName << endl;
-                        cout << searchResult;
+                        cout << searchResult << endl;
                     }else
                     {
-                        cout << "No applications found in category" << categoryName << " for given range (" << lower << "," << upper << ")"  << endl;
+                        cout << "No applications found in category" << categoryName << " for given range (" << lower << "," << upper << ")"  << endl << endl;
                     }
 
                 }else
@@ -518,10 +612,12 @@ int main() {
         }else if(input.find("delete") != string::npos)
         {
             string categoryName = "";
+            string appName = "";
             searchResult = "";
 
             //Extract category name.
-            for(int i = 8; i < input.length(); i++)
+            int i = 8;
+            for(i; i < input.length(); i++)
             {
                 if(input[i] == '"')
                 {
@@ -531,22 +627,50 @@ int main() {
             }
 
             //Extract application name.
-            for(int i = 8; i < input.length(); i++)
+            for(i = i+3; i < input.length(); i++)
             {
                 if(input[i] == '"')
                 {
                     break;
                 }
-                categoryName+=input[i];
+                appName+=input[i];
             }
 
-            cout << categoryName;
+            //Extract rootNode from selected category.
+            app* rootNode = NULL;
+            for(int i = 0; i < n; i++)
+            {
+                if((categories[i]->category).compare(categoryName) == 0)
+                {
+                    rootNode = categories[i]->root;
+                    break;
+                }
+            }
 
+            //Delete node from BST.
+            //deleteNode(rootNode, searchHashResult->app_name);
+
+            //Delete from hash table.
+            //int posA = hashFunc(searchHashResult->app_name);
+            //deleteHashEntry(hashTable[hashFunc(appName)], searchHashResult->app_name);
+
+
+        }else if(input.find("no report") != string::npos) {
+
+        }else if(input.find("report") != string::npos)
+        {
 
         }
 
 
+
+
     }
+
+    //Graceful termination.
+    //delete(hashTable);
+    //delete(categories);
+
 
     return 0;
 }
